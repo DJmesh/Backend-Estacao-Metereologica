@@ -51,8 +51,8 @@ MIDDLEWARE = [
 # WhiteNoise (arquivos estáticos comprimidos com hash)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# ---- CORS (dev) ----
 CORS_ALLOWED_ORIGINS = [
+    "https://meteo-station-api.onrender.com/"
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://localhost:3000",
@@ -60,8 +60,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# SessionAuth em outro domínio/porta:
 CSRF_TRUSTED_ORIGINS = [
+    "https://meteo-station-api.onrender.com/"
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
