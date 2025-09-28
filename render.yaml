@@ -13,10 +13,6 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         value: meteo-station-api.onrender.com
       - key: DB_NAME
-        value: /data/db.sqlite3
+        value: /var/tmp/db.sqlite3
       - key: TZ
         value: America/Sao_Paulo
-    disk:
-      name: sqlite-data
-      mountPath: /data
-      sizeGB: 1
