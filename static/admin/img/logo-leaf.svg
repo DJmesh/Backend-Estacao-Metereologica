@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="48" viewBox="0 0 160 48">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2e7d32"/>
+      <stop offset="100%" stop-color="#43a047"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="160" height="48" rx="8" fill="url(#g)"/>
+  <g transform="translate(10,8)" fill="#fff">
+    <path d="M18 0c10 4 14 13 10 20-4 8-14 10-22 7 2-6 7-12 12-15-6 1-12 5-16 10C0 15 1 8 6 4 9 2 13 0 18 0z"/>
+    <text x="40" y="22" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold">Meteo Admin</text>
+  </g>
+</svg>

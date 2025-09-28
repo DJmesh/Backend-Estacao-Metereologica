@@ -1,31 +1,22 @@
-"""
-Django settings for app project.
-
-Gerado com Django 5.2.6.
-"""
-
 from pathlib import Path
 from datetime import timedelta
 import os
 
-# --- Paths básicos ---
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- Segurança / Debug ---
-# Em produção, use variáveis de ambiente.
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
     "django-insecure-afn#(8z&dsp(89ogh3!7t@$q@xv^2(uf%b@*xiigzug8wdcv=8",
 )
-DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
+DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
-# --- Apps instalados ---
 INSTALLED_APPS = [
-    # Admin com tema
+    # Theme
     "jazzmin",
 
     # Django core
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -35,19 +26,20 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
-    "rest_framework.authtoken",
     "drf_spectacular",
     "django_filters",
 
-    # Apps locais
+    # Local apps
     "base",
-
-
+    "core",
+    "user",
+    "weather",
 ]
 
-# --- Middlewares ---
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware", 
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -56,7 +48,27 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# --- URLs / WSGI ---
+# WhiteNoise (arquivos estáticos comprimidos com hash)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# ---- CORS (dev) ----
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# SessionAuth em outro domínio/porta:
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Em desenvolvimento, se quiser liberar tudo (NÃO use em produção):
+# CORS_ALLOW_ALL_ORIGINS = True
+
 ROOT_URLCONF = "app.urls"
 
 TEMPLATES = [
@@ -77,8 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "app.wsgi.application"
 
-# --- Database ---
-# Por padrão SQLite; em produção, ajuste via envs.
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
@@ -90,7 +100,6 @@ DATABASES = {
     }
 }
 
-# --- Validação de senha ---
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -98,21 +107,26 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# --- Locale / Timezone ---
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 
-# --- Static ---
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
+# Static files
+STATIC_URL = "/static/"
 
-# --- Primary key default ---
+# Diretório-fonte (onde está admin/css, admin/js, etc)
+STATICFILES_DIRS = [ BASE_DIR / "static" ]
+
+# Diretório de saída da coleta
+STATIC_ROOT = BASE_DIR / "static_collected"
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Custom user model
+AUTH_USER_MODEL = "user.User"
 
-# --- DRF / JWT / Filters / Schema ---
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -130,18 +144,17 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
 }
 
+# app/settings.py
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Meteo Station API",
-    "DESCRIPTION": (
-        "Backend de Estação Meteorológica "
-        "(Umidade, Temperatura, Direção/Velocidade do Vento, Pluviômetro, Luminosidade)."
-    ),
+    "DESCRIPTION": "Weather station backend (humidity, temperature, wind, rain, luminosity).",
     "VERSION": "1.0.0",
-    "SERVERS": [{"url": "http://127.0.0.1:8000"}],
-    "CONTACT": {"name": "Equipe Meteo", "email": "dev@example.com"},
-    "SWAGGER_UI_SETTINGS": {
-        "persistAuthorization": True,
-    },
+    "SERVERS": [
+        {"url": "http://localhost:8000"},
+        {"url": "http://127.0.0.1:8000"},
+    ],
+    "SWAGGER_UI_SETTINGS": {"persistAuthorization": True},
     "COMPONENT_SPLIT_REQUEST": True,
     "SECURITY": [{"BearerAuth": []}],
     "COMPONENTS": {
@@ -149,10 +162,14 @@ SPECTACULAR_SETTINGS = {
             "BearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
         }
     },
+    "TAGS": [
+        {"name": "Auth", "description": "JWT authentication endpoints."},
+        {"name": "Core", "description": "Core endpoints (health, status)."},
+        {"name": "Weather - Stations", "description": "Manage weather stations."},
+        {"name": "Weather - Readings", "description": "Manage sensor readings."},
+    ],
 }
 
-# --- SimpleJWT ---
-# (NÃO importe JWTAuthentication aqui! Use apenas as strings acima no DRF)
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -160,11 +177,45 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# --- Jazzmin
 JAZZMIN_SETTINGS = {
     "site_title": "Meteo Admin",
     "site_header": "Meteo Admin",
     "site_brand": "Meteo Station",
+    "site_logo": "admin/img/logo-leaf.svg",
+    "login_logo": "admin/img/logo-leaf.svg",
     "welcome_sign": "Bem-vindo ao Meteo Admin",
     "show_ui_builder": False,
+    "topmenu_links": [
+        {"name": "Documentação", "url": "swagger-ui", "permissions": ["auth.view_user"]},
+        {"name": "Health", "url": "core:health", "permissions": []},
+    ],
+    "icons": {
+        "user.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "weather.Station": "fas fa-leaf",
+        "weather.Reading": "fas fa-cloud-sun",
+    },
+    "custom_css": ["admin/css/green-theme.css"],
+    "custom_js": ["admin/js/lucide-jazzmin.js"],
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "minty",
+    "dark_mode_theme": "darkly",
+    "navbar": "navbar-success navbar-dark",
+    "no_navbar_border": True,
+    "sidebar": "sidebar-dark-success",
+    "sidebar_nav_flat_style": True,
+    "sidebar_nav_child_indent": True,
+    "related_modal_active": True,
+    "brand_colour": "navbar-success",
+    "accent": "accent-success",
+    "button_classes": {
+        "primary": "btn-success",
+        "secondary": "btn-outline-success",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
 }

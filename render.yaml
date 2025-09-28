@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: meteo-station-api
+    env: docker
+    plan: free
+    region: oregon
+    autoDeploy: false
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: meteo-station-api.onrender.com
+      - key: DB_NAME
+        value: /data/db.sqlite3
+      - key: TZ
+        value: America/Sao_Paulo
+    disk:
+      name: sqlite-data
+      mountPath: /data
+      sizeGB: 1

@@ -1,5 +1,5 @@
 from django.db import models
-from base.models.base import BaseModel
+from base.models import BaseModel
 
 class Station(BaseModel):
     name = models.CharField(max_length=120, unique=True)
@@ -12,5 +12,5 @@ class Station(BaseModel):
         verbose_name = "Estação"
         verbose_name_plural = "Estações"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name

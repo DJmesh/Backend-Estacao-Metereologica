@@ -1,27 +1,25 @@
-from rest_framework import viewsets, permissions
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from weather.models.station import Station
-from weather.models.reading import Reading
 from weather.serializers.station_serializers import StationSerializer
-from weather.serializers.reading_serializers import ReadingSerializer
 
-class StationViewSet(viewsets.ModelViewSet):
+@extend_schema_view(
+    list=extend_schema(tags=["Weather - Stations"]),
+    retrieve=extend_schema(tags=["Weather - Stations"]),
+    create=extend_schema(tags=["Weather - Stations"]),
+    update=extend_schema(tags=["Weather - Stations"]),
+    partial_update=extend_schema(tags=["Weather - Stations"]),
+    destroy=extend_schema(tags=["Weather - Stations"]),
+)
+class StationViewSet(ModelViewSet):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["is_active"]
-    search_fields = ["name", "description"]
-    ordering_fields = ["name", "created_at", "updated_at"]
-
-    @action(detail=True, methods=["get"], url_path="latest-reading")
-    def latest_reading(self, request, pk=None):
-        station = self.get_object()
-        reading = Reading.objects.filter(station=station).order_by("-measured_at", "-created_at").first()
-        if not reading:
-            return Response({"detail": "Sem leituras para esta estação."}, status=404)
-        return Response(ReadingSerializer(reading).data)
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    search_fields = ["name"]
+    ordering_fields = ["name", "created_at"]
+    ordering = ["name"]

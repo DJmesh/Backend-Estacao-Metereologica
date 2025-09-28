@@ -1,0 +1,137 @@
+/* Paleta principal */
+:root{
+  --green-900:#1e4620;
+  --green-800:#1b5e20;
+  --green-700:#2e7d32;
+  --green-600:#388e3c;
+  --green-500:#43a047;
+  --green-400:#66bb6a;
+  --green-300:#81c784;
+  --green-200:#a5d6a7;
+  --green-100:#c8e6c9;
+
+  --accent:#43a047;
+  --accent-2:#66bb6a;
+}
+
+/* Navbar/Brand */
+.navbar { box-shadow: 0 2px 12px rgba(0,0,0,.08) }
+.brand-link {
+  background: linear-gradient(90deg,var(--green-700),var(--green-500));
+  color:#fff !important;
+}
+.brand-link .brand-text { font-weight:700; letter-spacing:.2px }
+
+/* Sidebar verde escuro */
+.sidebar-dark-success { background-color: var(--green-900) !important; }
+.sidebar .nav-link { color: #e9fce9 !important; }
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover { background-color: rgba(102,187,106,.18) !important; }
+
+/* Remover ícone FA (vamos usar Lucide por JS) */
+.sidebar .nav-link .nav-icon { display:none !important; }
+.sidebar .nav-link [data-lucide]{
+  width:18px; height:18px; margin-right:.6rem; vertical-align:-3px;
+}
+
+/* Cards, tabelas e formulários */
+.card { border-radius: .75rem; border:1px solid rgba(0,0,0,.04) }
+.card-header { background: var(--green-600); color:#fff; border-bottom:0 }
+.table thead th { background: var(--green-200); border-bottom:0; }
+
+.form-control:focus{
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 .2rem rgba(67,160,71,.25);
+}
+.custom-control-input:focus ~ .custom-control-label::before{
+  box-shadow: 0 0 0 .2rem rgba(67,160,71,.25) !important;
+}
+a, .text-primary { color: var(--green-600) !important; }
+a:hover { color: var(--green-700) !important; }
+
+/* Botões */
+.btn-primary, .btn-success {
+  background: var(--green-600) !important;
+  border-color: var(--green-600) !important;
+}
+.btn-primary:hover, .btn-success:hover { filter: brightness(.95) }
+
+/* Badges */
+.badge-primary, .badge-success{
+  background: var(--green-600);
+}
+
+/* ========= LOGIN PAGE (sem imagens, só CSS) ========= */
+
+html, body{ height:100% }
+
+/* Desenho do fundo: céu, sol e "colinas" com gradientes */
+body.login-page,
+body.hold-transition.login-page,
+body[class*="login"]{
+  position: relative;
+  background: linear-gradient(var(--green-100), #e8f5e9) !important;
+  overflow: hidden;
+}
+
+/* Camada das colinas */
+body.login-page::before{
+  content:"";
+  position: fixed; inset:0;
+  z-index:-2;
+  background:
+    /* colina 1 */
+    radial-gradient(1200px 600px at -10% 110%, var(--green-800) 0%, transparent 60%),
+    /* colina 2 */
+    radial-gradient(900px 500px at 30% 120%, var(--green-700) 0%, transparent 60%),
+    /* colina 3 */
+    radial-gradient(1200px 600px at 70% 120%, var(--green-600) 0%, transparent 60%),
+    /* céu */
+    linear-gradient(#e8f5e9, var(--green-100));
+}
+
+/* Sol e brilhos no céu */
+body.login-page::after{
+  content:"";
+  position: fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(80px 80px at 12% 12%, #ffe082, #ffd54f 60%, transparent 61%),
+    radial-gradient(3px 3px at 18% 10%, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(3px 3px at 25% 14%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(2px 2px at 30% 11%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(2px 2px at 35% 16%, rgba(255,255,255,.8), transparent 60%);
+  mix-blend-mode: screen;
+  opacity:.85;
+}
+
+/* Cartão do login */
+.login-logo img, .brand-image{
+  border-radius:12px; background: var(--green-800); padding:6px 12px;
+}
+.login-card-body,
+.card-primary:not(.card-outline) > .card-header{
+  border-radius:12px;
+}
+
+
+.firefly{
+  position: fixed; pointer-events:none;
+  width:6px; height:6px; border-radius:50%;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 0 8px 3px rgba(255,255,255,.55);
+  animation:
+    drift var(--dur, 12s) linear infinite,
+    flicker 3s ease-in-out infinite alternate;
+  opacity:.8;
+  z-index: -1;
+}
+
+@keyframes drift{
+  from{ transform: translate(var(--x0, 0vw), var(--y0, 0vh)); }
+  to  { transform: translate(var(--x1, 100vw), var(--y1, 100vh)); }
+}
+@keyframes flicker{
+  0%{ opacity:.2; transform: scale(.8) translateZ(0) }
+  50%{ opacity:.9; transform: scale(1) translateZ(0) }
+  100%{ opacity:.3; transform: scale(.85) translateZ(0) }
+}

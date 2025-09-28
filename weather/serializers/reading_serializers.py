@@ -22,10 +22,10 @@ class ReadingSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        hum = attrs.get("humidity", None)
-        wd = attrs.get("wind_dir", None)
+        hum = attrs.get("humidity")
+        wd = attrs.get("wind_dir")
         if hum is not None and not (0.0 <= hum <= 100.0):
             raise serializers.ValidationError({"humidity": "Deve estar entre 0 e 100."})
-        if wd is not None and not (0.0 <= wd < 360.0):
-            raise serializers.ValidationError({"wind_dir": "Deve estar entre 0 e 359.99."})
+        if wd is not None and not (0.0 <= wd <= 360.0):
+            raise serializers.ValidationError({"wind_dir": "Deve estar entre 0 e 360."})
         return attrs
