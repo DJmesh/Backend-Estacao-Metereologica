@@ -5,7 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "guid",
+            "id",
             "username",
             "email",
             "first_name",
@@ -14,16 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "date_joined",
         ]
-        read_only_fields = ["guid", "date_joined", "is_staff"]
+        read_only_fields = ["id", "date_joined", "is_staff"]
 
 class MeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "guid",
+            "id",
             "username",
             "email",
             "first_name",
             "last_name",
         ]
-        read_only_fields = ["guid", "username", "email"]
+        read_only_fields = ["id", "username", "email"]
