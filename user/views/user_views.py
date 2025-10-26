@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.models.user import User
 from user.serializers.user_serializers import UserSerializer, MeSerializer
+from drf_spectacular.utils import extend_schema
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -22,6 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ["username", "email"]
     ordering_fields = ["username", "date_joined"]
 
+@extend_schema(tags=["Users"], responses=MeSerializer)
 class MeView(APIView):
     """
     Retorna dados do usuário autenticado.
